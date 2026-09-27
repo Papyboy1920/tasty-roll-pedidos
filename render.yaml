@@ -1,0 +1,18 @@
+# Render Blueprint — Tasty Roll
+# Despliegue con 1 clic desde el dashboard de Render (New > Blueprint).
+# Crea el servicio web con plan gratuito.
+# NOTA: usa SQLite en el disco efímero de Render — SOLO para demo/arranque.
+# Un lanzamiento real requiere Postgres pago (ver README).
+services:
+  - type: web
+    name: tasty-roll-pedidos
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/catalog
+    envVars:
+      - key: STORE_KEY
+        generateValue: true
+        # Render genera una clave aleatoria. Cópiala del dashboard
+        # (Environment) y pégala en /tienda para entrar.
