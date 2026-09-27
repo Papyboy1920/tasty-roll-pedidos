@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tienda — Tasty Roll</title>
+<style>
+  :root { --green:#3b9fe0; --green-d:#7cc4f2; --gold:#f2b705; --bg:#171310; --card:#241d16; --txt:#f5efe6; --mut:#b9a88f; --line:#3d3128; --red:#e05a4e; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; background:var(--bg); color:var(--txt); }
+  header { background:#123; background:#0b3a66; color:#fff; padding:12px 16px; position:sticky; top:0; z-index:20; }
+  header h1 { margin:0; font-size:18px; } header h1 span { color:var(--gold); }
+  header .st { font-size:12px; margin-top:3px; } .dot { display:inline-block; width:9px; height:9px; border-radius:50%; background:#5cb85c; margin-right:5px; }
+  .dot.off { background:#e74c3c; }
+  nav { display:flex; background:var(--card); border-bottom:1px solid var(--line); position:sticky; top:57px; z-index:15; }
+  nav button { flex:1; border:none; background:none; padding:14px; font-size:16px; font-weight:700; color:var(--mut); cursor:pointer; border-bottom:3px solid transparent; }
+  nav button.on { color:var(--green-d); border-bottom-color:var(--green); }
+  main { max-width:720px; margin:0 auto; padding:12px 12px 60px; }
+  .tab { display:none; } .tab.on { display:block; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px; }
+  .card.nuevo { border-left:6px solid #e67e22; } .card.preparando { border-left:6px solid #2980b9; }
+  .card.listo { border-left:6px solid #8e44ad; } .card.entregado { border-left:6px solid var(--green); opacity:.75; }
+  .card.cancelado { border-left:6px solid var(--red); opacity:.6; }
+  .o-head { display:flex; justify-content:space-between; align-items:center; }
+  .o-num { font-size:22px; font-weight:800; }
+  .badge { font-size:12px; font-weight:700; padding:5px 12px; border-radius:999px; color:#fff; text-transform:uppercase; }
+  .b-nuevo { background:#e67e22; } .b-preparando { background:#2980b9; } .b-listo { background:#8e44ad; }
+  .b-entregado { background:var(--green); } .b-cancelado { background:var(--red); }
+  .o-meta { font-size:13px; color:var(--mut); margin-top:4px; }
+  .o-items { margin:10px 0; font-size:14px; }
+  .o-items .ln { padding:4px 0; border-bottom:1px dashed var(--line); }
+  .o-items .ln small { color:var(--mut); }
+  .o-cust { font-size:14px; background:#1e2a35; border-radius:10px; padding:10px; margin-bottom:10px; }
+  .o-cust a { color:var(--green-d); font-weight:700; text-decoration:none; font-size:16px; }
+  .o-total { font-size:18px; font-weight:800; color:var(--green-d); text-align:right; margin:6px 0 10px; }
+  .stbtns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .stbtns button { border:none; border-radius:10px; padding:14px 8px; font-size:15px; font-weight:700; cursor:pointer; color:#fff; }
+  .b-prep { background:#2980b9; } .b-ready { background:#8e44ad; } .b-done { background:var(--green); } .b-cancel { background:var(--red); }
+  .empty { text-align:center; color:var(--mut); padding:40px 10px; font-size:15px; }
+  /* catálogo */
+  .dept-h { font-size:17px; font-weight:800; margin:16px 0 8px; }
+  .cat-h { font-size:15px; font-weight:700; margin:12px 0 6px; color:var(--txt); }
+  .it { display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px; margin-bottom:8px; }
+
+  .it.off { opacity:.45; }
+  .it input[type=text] { border:1px solid var(--line); border-radius:8px; padding:10px; font-size:14px; }
+  .it .nm { flex:1; min-width:0; }
+  .it .pr { width:90px; }
+  .it .ds { flex:1 1 100%; border:1px solid var(--line); border-radius:8px; padding:8px; font-size:13px; background:#171310; color:var(--txt); font-family:inherit; resize:vertical; }
+  .tog { border:none; border-radius:8px; padding:10px 12px; font-size:13px; font-weight:700; cursor:pointer; min-width:74px; }
+  .tog.on { background:var(--green); color:#fff; } .tog.offb { background:#3d3128; color:var(--txt); }
+  .add { border:2px dashed var(--green); background:#241d16; color:var(--green-d); border-radius:10px; padding:12px; width:100%; font-size:15px; font-weight:700; cursor:pointer; margin:6px 0 4px; }
+  .savebar { position:sticky; bottom:0; background:var(--card); border-top:1px solid var(--line); padding:10px; margin:14px -12px -60px; padding-bottom:calc(10px + env(safe-area-inset-bottom)); }
+  .savebar button { width:100%; background:var(--green); color:#fff; border:none; border-radius:12px; padding:16px; font-size:17px; font-weight:800; cursor:pointer; }
+  .hint { font-size:12px; color:var(--mut); margin:8px 0; }
+  /* puerta de acceso */
+  #gate { position:fixed; inset:0; background:#0b3a66; z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .gate-card { background:var(--card); border-radius:16px; padding:24px; max-width:340px; width:100%; text-align:center; }
+  .gate-t { font-size:20px; font-weight:800; margin-bottom:8px; }
+  .gate-card p { color:var(--mut); font-size:14px; }
+  .gate-card input { width:100%; border:1px solid var(--line); border-radius:10px; padding:14px; font-size:16px; margin:8px 0; }
+  .gate-card button { width:100%; background:var(--green); color:#fff; border:none; border-radius:10px; padding:14px; font-size:16px; font-weight:800; cursor:pointer; }
+  .gate-err { color:var(--red); font-size:13px; min-height:18px; margin-bottom:6px; }
+  /* historial */
+  .h-filters { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+  .h-dates { display:flex; gap:6px; flex-wrap:wrap; }
+  .hf { border:1px solid var(--line); background:var(--card); color:var(--txt); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer; }
+  .hf.on { background:var(--txt); color:var(--bg); border-color:var(--txt); }
+  .h-srow { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; }
+  #h-status { flex:1; border:1px solid var(--line); border-radius:10px; padding:10px; font-size:14px; background:var(--card); color:var(--txt); }
+  .h-summary { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:15px; margin-bottom:10px; }
+  .h-row .o-items { margin:8px 0; }
+</style>
+</head>
+<body>
+<div id="gate" style="display:none">
+  <div class="gate-card">
+    <div class="gate-t">🔒 Acceso de tienda</div>
+    <p>Escribe la clave de la tienda para ver los pedidos.</p>
+    <input type="password" id="gatekey" placeholder="Clave" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
+    <div id="gateerr" class="gate-err"></div>
+    <button onclick="unlock()">Entrar</button>
+  </div>
+</div>
+<header>
+  <h1>🏪 Tasty Roll <span>Tienda</span></h1>
+  <div class="st"><span class="dot" id="dot"></span><span id="conn">Conectando…</span></div>
+</header>
+<nav>
+  <button id="tab-o" class="on" onclick="showTab('o')">📦 Pedidos <span id="cnt"></span></button>
+  <button id="tab-c" onclick="showTab('c')">📝 Catálogo</button>
+  <button id="tab-h" onclick="showTab('h')">📊 Historial</button>
+</nav>
+<main>
+  <section class="tab on" id="t-o"><div id="orders"></div></section>
+  <section class="tab" id="t-c">
+    <div class="hint">Toca el nombre o el precio para cambiarlo. Toca la descripción para editar el "qué trae" que ven los clientes al abrir el detalle. Usa el botón verde/gris para mostrar u ocultar un producto en la app de los clientes. <b>No olvides guardar.</b></div>
+    <div id="catedit"></div>
+    <div class="savebar"><button onclick="saveCatalog()">💾 Guardar cambios del catálogo</button></div>
+  </section>
+  <section class="tab" id="t-h">
+    <div class="h-filters">
+      <div class="h-dates">
+        <button class="hf on" data-r="all" onclick="setHRange('all')">Todo</button>
+        <button class="hf" data-r="today" onclick="setHRange('today')">Hoy</button>
+        <button class="hf" data-r="yesterday" onclick="setHRange('yesterday')">Ayer</button>
+        <button class="hf" data-r="week" onclick="setHRange('week')">Últimos 7 días</button>
+      </div>
+      <div class="h-srow"><span>Estado:</span><select id="h-status" onchange="setHStatus(this.value)"></select></div>
+    </div>
+        <div style="margin:12px 0"><button onclick="clearHistory()" style="background:#b3261e;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer">🧹 Limpiar historial</button></div>
+<div class="h-summary" id="h-summary"></div>
+    <div id="history"></div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => "RD$" + Number(n).toLocaleString("es-DO", {maximumFractionDigits: 2});
+const STATUS_ES = { nuevo:"Nuevo", preparando:"Preparando", listo:"Listo", entregado:"Entregado", cancelado:"Cancelado" };
+const TYPE_ES = { delivery:"🛵 Delivery", pickup:"🏪 Recoger" };
+const PAY_ES = { cash:"💵 Efectivo", transfer:"🏦 Transferencia" };
+let orders = [];
+let catalog = null;
+let audioCtx = null;
+// Los navegadores silencian el audio hasta que el usuario toca la pantalla: el primer toque lo desbloquea
+document.addEventListener("pointerdown", function unlockAudio() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {}
+}, { passive: true });
+
+function showTab(t) {
+  $("t-o").classList.toggle("on", t === "o");
+  $("t-c").classList.toggle("on", t === "c");
+  $("tab-o").classList.toggle("on", t === "o");
+  $("tab-c").classList.toggle("on", t === "c");
+  $("t-h").classList.toggle("on", t === "h");
+  $("tab-h").classList.toggle("on", t === "h");
+  if (t === "h" && typeof renderHistory === "function") renderHistory();
+}
+
+// ---- acceso con clave de tienda ----
+function storeKey() { return localStorage.getItem("tasty_roll_store_key") || ""; }
+function authHeaders(extra) {
+  const h = Object.assign({}, extra || {});
+  const k = storeKey();
+  if (k) h["x-store-key"] = k;
+  return h;
+}
+function needKey() { $("gate").style.display = "flex"; }
+async function probe() {
+  try {
+    const r = await fetch("/api/orders", { headers: authHeaders() });
+    if (r.status === 401) { needKey(); return false; }
+    $("gate").style.display = "none";
+    return true;
+  } catch (e) { needKey(); return false; }
+}
+async function unlock() {
+  const k = $("gatekey").value.trim();
+  if (!k) return;
+  localStorage.setItem("tasty_roll_store_key", k);
+  $("gateerr").textContent = "";
+  if (await probe()) { boot(); }
+  else { $("gateerr").textContent = "❌ Clave incorrecta. Intenta de nuevo."; }
+}
+
+// ---- pedidos ----
+async function clearHistory() {
+  if (!confirm("\u00bfBorrar TODO el historial de pedidos? No se puede deshacer.")) return;
+  if (!confirm("\u00daltima confirmaci\u00f3n: se borran todos los pedidos y el pr\u00f3ximo pedido vuelve a ser #001.")) return;
+  const r = await fetch("/api/orders", { method: "DELETE", headers: authHeaders() });
+  if (r.ok) loadOrders(); else alert("No se pudo limpiar el historial.");
+}
+async function loadOrders() {
+  const r = await fetch("/api/orders", { headers: authHeaders() });
+  if (r.status === 401) { needKey(); return; }
+  orders = await r.json();
+  renderOrders();
+}
+function esc(s) { return String(s == null ? "" : s).replace(/</g, "&lt;"); }
+function renderOrders() {
+  const box = $("orders");
+  const vis = orders.filter(o => o.status !== "cancelado");
+  const act = orders.filter(o => o.status === "nuevo" || o.status === "preparando").length;
+  $("cnt").textContent = act ? `(${act})` : "";
+  if (!vis.length) { box.innerHTML = `<div class="empty">📭 No hay pedidos todavía.<br>Cuando un cliente pida, aparece aquí al instante.</div>`; return; }
+  box.innerHTML = vis.map(o => `
+    <div class="card ${o.status}">
+      <div class="o-head">
+        <div class="o-num">${esc(o.number)}</div>
+        <div class="badge b-${o.status}">${STATUS_ES[o.status]}</div>
+      </div>
+      <div class="o-meta">${TYPE_ES[o.type]} · ${PAY_ES[o.payment]} · ${esc(o.created_at)}</div>
+      <div class="o-items">${o.items.map(l =>
+        `<div class="ln">🧾 <b>${l.qty} ×</b> ${esc(l.name)} <small>(${fmt(l.price)}/${esc(l.unit)})</small>${l.note ? `<br><small>📝 ${esc(l.note)}</small>` : ""}</div>`
+      ).join("")}</div>
+      <div class="o-total">Total: ${fmt(o.items.reduce((s, l) => s + l.subtotal, 0))}</div>
+      <div class="o-cust">
+        👤 <b>${esc(o.customer.name)}</b><br>
+        📞 <a href="tel:${esc(o.customer.phone)}">${esc(o.customer.phone)}</a> <small>(toca para llamar)</small>
+        ${o.customer.address ? `<br>📍 ${esc(o.customer.address)}` : ""}
+        ${o.notes ? `<br>📝 ${esc(o.notes)}` : ""}
+      </div>
+      <div class="stbtns">
+        ${o.status === "nuevo" ? `<button class="b-prep" onclick="setStatus(${o.id},'preparando')">👨‍🍳 Preparando</button>` : ""}
+        ${o.status === "preparando" ? `<button class="b-ready" onclick="setStatus(${o.id},'listo')">🔔 Listo</button>` : ""}
+        ${o.status === "listo" ? `<button class="b-done" onclick="setStatus(${o.id},'entregado')">✅ Entregado</button>` : ""}
+        ${(o.status === "nuevo" || o.status === "preparando") ? `<button class="b-cancel" onclick="cancelOrder(${o.id})">✖ Cancelar</button>` : ""}
+      </div>
+    </div>`).join("");
+}
+async function setStatus(id, status) {
+  const r = await fetch(`/api/orders/${id}`, { method: "PATCH", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ status }) });
+  if (r.status === 401) { needKey(); return; }
+  if (r.ok) { const u = await r.json(); upsert(u); }
+}
+function upsert(o) {
+  const i = orders.findIndex(x => x.id === o.id);
+  if (i >= 0) orders[i] = o; else orders.unshift(o);
+  renderOrders();
+}
+
+// ---- alerta: notificación + sonido ----
+function beep() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    for (let i = 0; i < 3; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.frequency.value = 880; o.type = "sine";
+      const t = audioCtx.currentTime + i * 0.35;
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.exponentialRampToValueAtTime(0.5, t + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      o.start(t); o.stop(t + 0.32);
+    }
+  } catch (e) {}
+}
+function alertNew(o) {
+  beep();
+  const total = fmt(o.items.reduce((s, l) => s + l.subtotal, 0));
+  const txt = `${TYPE_ES[o.type]} · ${o.items.reduce((s, l) => s + l.qty, 0)} artículos · ${total}`;
+  if ("Notification" in window && Notification.permission === "granted") {
+    try { new Notification(`🔔 Nuevo pedido ${o.number} — ${o.customer.name}`, { body: txt }); } catch (e) {}
+  } else {
+    alert(`🔔 NUEVO PEDIDO ${o.number}\n${o.customer.name} · ${txt}`);
+  }
+}
+
+// ---- SSE ----
+function connectSSE() {
+  const es = new EventSource("/api/events?key=" + encodeURIComponent(storeKey()));
+  es.addEventListener("connected", () => { $("conn").textContent = "En vivo · esperando pedidos"; $("dot").classList.remove("off"); });
+  es.addEventListener("new-order", e => { const o = JSON.parse(e.data); upsert(o); alertNew(o); });
+  es.addEventListener("order-status", e => upsert(JSON.parse(e.data)));
+  es.addEventListener("orders-cleared", () => loadOrders());
+  es.onerror = () => { $("conn").textContent = "Sin conexión — reintentando…"; $("dot").classList.add("off"); };
+}
+
+// ---- catálogo ----
+async function loadCatalog() {
+  const r = await fetch("/api/catalog");
+  catalog = await r.json();
+  renderCatEdit();
+}
+function renderCatEdit() {
+  $("catedit").innerHTML = catalog.departments.map((d, di) => `
+    <div class="dept-h">${d.icon || "🛒"} ${esc(d.name)}</div>
+    ${d.categories.map((c, ci) => `
+      <div class="cat-h">${esc(c.name)}</div>
+      ${c.items.map((it, ii) => `
+        <div class="it ${it.active ? "" : "off"}">
+          <input type="text" class="nm" value="${esc(it.name)}" data-d="${di}" data-c="${ci}" data-i="${ii}" data-f="name">
+          <input type="text" class="pr" inputmode="decimal" value="${it.price}" data-d="${di}" data-c="${ci}" data-i="${ii}" data-f="price">
+          <button class="tog ${it.active ? "on" : "offb"}" onclick="toggleItem(${di},${ci},${ii})">${it.active ? "Activo" : "Oculto"}</button>
+          <textarea class="ds" rows="2" placeholder="Descripción / qué trae…" data-d="${di}" data-c="${ci}" data-i="${ii}" data-f="desc">${esc(it.desc || "")}</textarea>
+        </div>`).join("")}
+      <button class="add" onclick="addItem(${di},${ci})">+ Agregar producto en ${esc(c.name)}</button>
+    `).join("")}
+    <button class="add" onclick="addCategory(${di})">+ Agregar categoría en ${esc(d.name)}</button>
+  `).join("");
+}
+function toggleItem(di, ci, ii) {
+  catalog.departments[di].categories[ci].items[ii].active = !catalog.departments[di].categories[ci].items[ii].active;
+  renderCatEdit();
+}
+function addItem(di, ci) {
+  const items = catalog.departments[di].categories[ci].items;
+  items.push({ id: "item-" + Date.now(), name: "Nuevo producto", price: 100, unit: "unidad", active: true });
+  renderCatEdit();
+}
+function addCategory(di) {
+  const name = prompt("Nombre de la nueva categoría:");
+  if (!name || !name.trim()) return;
+  catalog.departments[di].categories.push({ id: "cat-" + Date.now(), name: name.trim(), items: [] });
+  renderCatEdit();
+}
+async function saveCatalog() {
+  // leer valores editados de los inputs
+  document.querySelectorAll("#catedit input, #catedit textarea").forEach(el => {
+    const { d, c, i, f } = el.dataset;
+    const it = catalog.departments[+d].categories[+c].items[+i];
+    if (f === "name") it.name = el.value.trim() || it.name;
+    if (f === "price") { const p = parseFloat(el.value); if (!isNaN(p) && p >= 0) it.price = Math.round(p * 100) / 100; }
+    if (f === "desc") it.desc = el.value.trim();
+  });
+  const r = await fetch("/api/catalog", { method: "PUT", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify(catalog) });
+  if (r.status === 401) { needKey(); alert("🔒 Escribe la clave de la tienda primero."); return; }
+  if (r.ok) alert("✅ Catálogo guardado. Los clientes ya ven los cambios.");
+  else alert("❌ No se pudo guardar. Intenta de nuevo.");
+}
+
+// ---- historial (back-office) ----
+const H_ALL = "Todos";
+const H_ORDERS = "pedidos";
+const H_TOTAL = "Total";
+const H_EMPTY = "📭 Sin resultados para este filtro.";
+const H_CANCEL_Q = "¿Cancelar este pedido? Quedará registrado en el historial como cancelado.";
+let hRange = "all", hStatus = "all";
+function hDate(v) { const d = new Date(String(v).replace(" ", "T")); return isNaN(d) ? null : d; }
+function hDay(x) { return new Date(x.getFullYear(), x.getMonth(), x.getDate()); }
+function hInRange(o) {
+  if (hRange === "all") return true;
+  const d = hDate(o.created_at); if (!d) return false;
+  const diff = Math.round((hDay(new Date()) - hDay(d)) / 864e5);
+  if (hRange === "today") return diff === 0;
+  if (hRange === "yesterday") return diff === 1;
+  if (hRange === "week") return diff >= 0 && diff <= 6;
+  return true;
+}
+function hFiltered() {
+  return orders
+    .filter(o => (hStatus === "all" || o.status === hStatus) && hInRange(o))
+    .slice()
+    .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+}
+function hOrderTotal(o) { return o.items.reduce((s, l) => s + l.subtotal, 0); }
+function setHRange(r) { hRange = r; document.querySelectorAll(".hf").forEach(b => b.classList.toggle("on", b.dataset.r === r)); renderHistory(); }
+function setHStatus(s) { hStatus = s; renderHistory(); }
+function cancelOrder(id) { if (confirm(H_CANCEL_Q)) setStatus(id, "cancelado"); }
+function renderHistory() {
+  const sel = $("h-status");
+  if (sel && !sel.options.length) {
+    sel.innerHTML = `<option value="all">${H_ALL}</option>` + Object.keys(STATUS_ES).map(s => `<option value="${s}">${STATUS_ES[s]}</option>`).join("");
+  }
+  const rows = hFiltered();
+  const rev = rows.reduce((s, o) => s + hOrderTotal(o), 0);
+  $("h-summary").innerHTML = `📊 <b>${rows.length}</b> ${H_ORDERS} · 💰 <b>${fmt(rev)}</b>`;
+  const box = $("history");
+  if (!rows.length) { box.innerHTML = `<div class="empty">${H_EMPTY}</div>`; return; }
+  box.innerHTML = rows.map(o => `
+    <div class="card h-row ${o.status}">
+      <div class="o-head">
+        <div class="o-num">${esc(o.number)}</div>
+        <div class="badge b-${o.status}">${STATUS_ES[o.status]}</div>
+      </div>
+      <div class="o-meta">🕒 ${esc(o.created_at)}</div>
+      <div class="o-items">${o.items.map(l => `<div class="ln">🧾 <b>${l.qty} ×</b> ${esc(l.name)}</div>`).join("")}</div>
+      <div class="o-cust">👤 <b>${esc(o.customer.name)}</b> · 📞 <a href="tel:${esc(o.customer.phone)}">${esc(o.customer.phone)}</a></div>
+      <div class="o-total">${H_TOTAL}: ${fmt(hOrderTotal(o))}</div>
+    </div>`).join("");
+}
+const _renderOrdersHist = renderOrders;
+renderOrders = function() { _renderOrdersHist(); if ($("t-h")) renderHistory(); };
+
+// ---- inicio ----
+async function boot() {
+  await loadOrders();
+  await loadCatalog();
+  connectSSE();
+}
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+probe().then(ok => { if (ok) boot(); });
+</script>
+</body>
+</html>
