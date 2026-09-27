@@ -1,0 +1,1 @@
+{"author":"","dependencies":{"express":"^5.2.1","pg":"^8.13.1"},"description":"Sistema de pedidos para Tasty Roll (Santo Domingo Este, RD)","engines":{"node":">=22.5"},"keywords":[],"license":"ISC","main":"server.js","name":"tasty-roll-pedidos","scripts":{"start":"node server.js"},"version":"1.0.0"}
