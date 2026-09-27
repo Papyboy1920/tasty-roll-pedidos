@@ -1,0 +1,16 @@
+# Railway — Tasty Roll
+# 1. Crea un proyecto nuevo en railway.app y conecta este repo.
+# 2. Agrega un servicio Postgres (New > Database > Postgres):
+#    Railway inyecta DATABASE_URL automáticamente.
+# 3. En el servicio web, agrega la variable STORE_KEY con una
+#    clave que elijas (ej: TASTYROLL-2026-PIANTINI) y pégala en /tienda.
+# 4. Deploy: Railway corre `npm install` y el startCommand de abajo.
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node server.js"
+healthcheckPath = "/api/catalog"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
