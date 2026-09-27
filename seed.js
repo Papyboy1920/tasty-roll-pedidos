@@ -20,7 +20,7 @@ const SEED_CATALOG = {
           name: "Rolls de canela",
           items: [
             { id: "roll-clasico", name: "Roll Clásico", price: 300, unit: "roll", active: true, image: "roll-clasico.jpg", desc: "Nuestro roll de canela clásico: esponjoso, tibio y con glaseado de vainilla. Amor a primera mordida." },
-            { id: "rolls-variados", name: "Rolls Variados", price: 400, unit: "roll", active: true, image: "rolls-variados.jpg", desc: "Roll de canela con el topping variado del día: chocolate, caramelo, nueces y más. Pregunta por los sabores disponibles." },
+            { id: "rolls-variados", name: "Rolls Variados", price: 400, unit: "roll", active: true, image: "rolls-variados.jpg", desc: "Nuestro roll con los toppings más pedidos: Pistacho, Chocolate, Fresa, Caramelo y más. Pregunta por los sabores de hoy." },
             { id: "caja-3", name: "Caja de 3", price: 1190, unit: "caja", active: true, image: "caja-3.jpg", desc: "Caja surtida con 3 rolls variados en nuestra cajita rosada. Perfecta para regalar… o no compartir." },
             { id: "caja-6", name: "Caja de 6", price: 2350, unit: "caja", active: true, image: "caja-6.jpg", desc: "Caja surtida con 6 rolls variados en nuestra cajita rosada. Ideal para la familia o la oficina." }
           ]
