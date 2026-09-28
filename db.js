@@ -135,6 +135,27 @@ function applyValueFixes(catalog) {
   return fixed;
 }
 
+// ---------- Correcciones de departamentos dirigidas por Portal (idempotentes) ----------
+// Solo se aplican si el valor actual coincide EXACTAMENTE con el esperado;
+// si el dueño ya lo cambió en /tienda, no se toca.
+const DEPT_FIXES = [
+  // v3 (2026-09-27, Portal): el 🌀 parecía un huracán — ahora es una rosa 🌹
+  { match: { id: "rolls", icon: "🌀" }, set: { icon: "🌹" } },
+];
+
+function applyDeptFixes(catalog) {
+  let fixed = 0;
+  for (const d of catalog.departments || []) {
+    for (const fx of DEPT_FIXES) {
+      if (fx.match.id && d.id !== fx.match.id) continue;
+      if (fx.match.icon !== undefined && d.icon !== fx.match.icon) continue;
+      for (const [k, v] of Object.entries(fx.set)) d[k] = v;
+      fixed++;
+    }
+  }
+  return fixed;
+}
+
 async function init() {
   if (process.env.DATABASE_URL) {
     const { Pool } = require("pg");
@@ -168,9 +189,10 @@ async function init() {
       try { live = JSON.parse(await kvGet("catalog")); } catch { live = null; }
       const m = mergeCatalog(live, SEED_CATALOG);
       const fixed = applyValueFixes(m.catalog);
+      const dfixed = applyDeptFixes(m.catalog);
       await kvSet("catalog", JSON.stringify(m.catalog));
       await kvSet("catalog_version", String(CATALOG_VERSION));
-      console.log(`[tastyroll] Catálogo fusionado (v${v} → v${CATALOG_VERSION}): +${m.added} nuevos, ${m.filled} campos rellenados, ${fixed} valores corregidos. Lo del dueño intacto.`);
+      console.log(`[tastyroll] Catálogo fusionado (v${v} → v${CATALOG_VERSION}): +${m.added} nuevos, ${m.filled} campos rellenados, ${fixed} valores corregidos, ${dfixed} deptos corregidos. Lo del dueño intacto.`);
     }
   }
   if (!(await kvGet("order_seq"))) await kvSet("order_seq", "0");

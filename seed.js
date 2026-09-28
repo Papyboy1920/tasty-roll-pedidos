@@ -5,7 +5,7 @@
 // diseños ("úsalo todo"). Ajustable en /tienda → Catálogo.
 // ============================================================
 
-const CATALOG_VERSION = 2;
+const CATALOG_VERSION = 3;
 
 const SEED_CATALOG = {
   version: CATALOG_VERSION,
@@ -13,7 +13,7 @@ const SEED_CATALOG = {
     {
       id: "rolls",
       name: "Rolls",
-      icon: "🌀",
+      icon: "🌹",
       categories: [
         {
           id: "rolls-todos",
@@ -32,6 +32,25 @@ const SEED_CATALOG = {
             { id: "roll-guava", name: "Guava cinnamon roll", price: 440, unit: "roll", active: true, image: "roll-guava.jpg", desc: "Dulce de guayaba con glaseado de queso crema: sabor tropical." },
             { id: "roll-blueberry", name: "Blueberry lemon", price: 440, unit: "roll", active: true, image: "roll-blueberry.jpg", desc: "Arándanos frescos con toque de limón y glaseado." },
             { id: "rolls-variados", name: "Rolls Variados", price: 400, unit: "roll", active: true, image: "rolls-variados.jpg", desc: "Nuestro roll con los toppings más pedidos: Pistacho, Chocolate, Fresa, Caramelo y más. Pregunta por los sabores de hoy." },
+            { id: "caja-3", name: "Caja de 3 Rolls Variados", price: 1290, unit: "caja", active: true, image: "caja-3.jpg", badge: "Popular", desc: "3 Cinnamon Rolls con el sabor y topping de tu preferencia, en nuestra cajita rosada." },
+            { id: "caja-6", name: "Caja de 6 Rolls Variados", price: 2490, unit: "caja", active: true, image: "caja-6.jpg", badge: "25% DTO", desc: "6 cinnamon rolls rellenos con el sabor y topping de tu preferencia. Ideal para la familia o la oficina." }
+          ]
+        }
+      ]
+    },
+    {
+      id: "mas-vendidos",
+      name: "Más vendidos",
+      icon: "⭐",
+      categories: [
+        {
+          id: "favoritos",
+          name: "Los favoritos",
+          items: [
+            { id: "roll-fresa-nutella", name: "Fresa Nutella Cinnamon Roll", price: 440, unit: "roll", active: true, image: "roll-fresa-nutella.jpg", badge: "Más vendido", desc: "Nutella, fresas frescas y crema batida: la combinación que nunca falla." },
+            { id: "roll-pistacho", name: "Pistacho Cinnamon Roll", price: 345, unit: "roll", active: true, image: "roll-pistacho.jpg", badge: "22% DTO", desc: "Nuestro roll bañado en crema de pistacho con crocante de pistacho por encima. El favorito de los que saben." },
+            { id: "roll-dulce-leche", name: "Dulce de leche y fresas", price: 440, unit: "roll", active: true, image: "roll-dulce-leche.jpg", desc: "Dulce de leche cremoso coronado con fresas frescas." },
+            { id: "roll-clasico", name: "Cinnamon Roll Clásico", price: 320, unit: "roll", active: true, image: "roll-clasico.jpg", desc: "Nuestro roll de canela clásico: esponjoso, tibio y con glaseado de queso crema. La tradición que nunca falla." },
             { id: "caja-3", name: "Caja de 3 Rolls Variados", price: 1290, unit: "caja", active: true, image: "caja-3.jpg", badge: "Popular", desc: "3 Cinnamon Rolls con el sabor y topping de tu preferencia, en nuestra cajita rosada." },
             { id: "caja-6", name: "Caja de 6 Rolls Variados", price: 2490, unit: "caja", active: true, image: "caja-6.jpg", badge: "25% DTO", desc: "6 cinnamon rolls rellenos con el sabor y topping de tu preferencia. Ideal para la familia o la oficina." }
           ]

@@ -257,7 +257,7 @@ function renderDepts() {
   $("cat-view").style.display = "none";
   $("dept-grid").style.display = "grid";
   $("dept-title").style.display = "block";
-  const dimgs = { rolls: "rolls-dept.jpg", bebidas: "bebidas-dept.jpg" };
+  const dimgs = { rolls: "rolls-dept.jpg", "mas-vendidos": "roll-fresa-nutella.jpg", bebidas: "bebidas-dept.jpg" };
   $("dept-grid").innerHTML = catalog.departments.map(d => {
     const img = dimgs[d.id] ? `<img class="dimg" src="images/${dimgs[d.id]}" alt="${d.name}">` : "";
     return `<div class="dept" onclick="openDept('${d.id}')">${img}<div class="ic">${d.icon || "🛒"}</div><div class="t">${d.name}</div></div>`;
