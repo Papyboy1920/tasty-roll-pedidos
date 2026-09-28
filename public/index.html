@@ -33,6 +33,7 @@
   .item .row1 { display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .item .nm { font-weight:600; font-size:15px; }
   .item .pr { color:var(--green-d); font-weight:700; font-size:14px; white-space:nowrap; }
+  .p-badge { display:inline-block; background:var(--green-d); color:#fff; font-size:11px; font-weight:800; border-radius:999px; padding:2px 10px; margin-bottom:6px; letter-spacing:.4px; }
   .qty { display:flex; align-items:center; gap:10px; margin-top:10px; }
   .qty button { width:44px; height:44px; border-radius:50%; border:2px solid var(--green); background:#fff; color:var(--green); font-size:22px; font-weight:700; cursor:pointer; }
   .qty button:active { background:var(--green); color:#fff; }
@@ -293,6 +294,7 @@ function renderItems() {
     const src = it.image || it.img;
     const thumb = src ? `<img class="thumb" src="images/${src}" alt="${it.name}" onclick="openDetail('${it.id}')">` : "";
     const main = `<div class="item-main" onclick="openDetail('${it.id}')">
+          ${it.badge ? `<div class="p-badge">${it.badge}</div>` : ""}
           <div class="row1"><div class="nm">${it.name}</div><div class="pr">${fmt(it.price)} <small>/${it.unit}</small></div></div>
           <div class="dtap">Toca para ver detalle 👆</div>
         </div>`;

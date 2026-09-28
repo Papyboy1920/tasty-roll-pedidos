@@ -102,7 +102,17 @@ function mergeCatalog(live, seed) {
 // Solo se aplican si el valor actual coincide EXACTAMENTE con el esperado;
 // si el dueño ya lo cambió en /tienda, no se toca.
 const VALUE_FIXES = [
-  // (sin correcciones pendientes)
+  // v2 (2026-09-27, Portal): menú ampliado según sus diseños —
+  // fotos, nombres y precios nuevos para los ítems existentes.
+  { match: { name: "Roll Clásico", price: 300 },
+    set: { name: "Cinnamon Roll Clásico", price: 320, image: "roll-clasico.jpg",
+      desc: "Nuestro roll de canela clásico: esponjoso, tibio y con glaseado de queso crema. La tradición que nunca falla." } },
+  { match: { name: "Caja de 3", price: 1190 },
+    set: { name: "Caja de 3 Rolls Variados", price: 1290, image: "caja-3.jpg", badge: "Popular",
+      desc: "3 Cinnamon Rolls con el sabor y topping de tu preferencia, en nuestra cajita rosada." } },
+  { match: { name: "Caja de 6", price: 2350 },
+    set: { name: "Caja de 6 Rolls Variados", price: 2490, image: "caja-6.jpg", badge: "25% DTO",
+      desc: "6 cinnamon rolls rellenos con el sabor y topping de tu preferencia. Ideal para la familia o la oficina." } },
 ];
 
 function applyValueFixes(catalog) {
